@@ -12,7 +12,7 @@ Pry::Commands.create_command "define-it", "Commands for code generation reported
       File.open(file, 'w') { |f| f.write(code) }
 
       silence_warnings do
-        TOPLEVEL_BINDING.eval(File.read(file), file)                                                                                                     
+        TOPLEVEL_BINDING.eval(File.read(file), file)
       end
 
       throw :try_again
@@ -23,12 +23,12 @@ Pry::Commands.create_command "define-it", "Commands for code generation reported
 
       method_def = "  def #{method}(#{args.join(',')})\n     \n  end"
 
-      file = Pry::CodeObject.lookup(klass,_pry_).source_file
-      file = `ack #{klass} *.rb`.split(':')[0] unless file
+      file = Pry::CodeObject.lookup(klass, pry_instance).source_file
+      file = `grep -l #{klass} *.rb`.split[0] unless file
 
       lines = File.readlines(file).size
       code  = File.read(file).gsub(/^end/mi) { |match| "#{method_def}\n\n#{match}" }
-      
+
       File.open(file, 'w') { |f| f.write(code) }
 
       run "edit -r -l #{lines+1} #{file}"
